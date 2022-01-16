@@ -31,7 +31,7 @@ just publish
 **Embed within Lambda container image**  
 For Lambda functions that use container images, install the extension as part of the container build:
 ```dockerfile
-ADD https://github.com/cludden/gomplate-lambda-extension/releases/latest/download/gomplate-lambda-extension /opt/extensions/gomplate-lambda-extension
+ADD https://github.com/cludden/gomplate-lambda-extension/releases/v0.1.0/download/gomplate-lambda-extension_0.1.0_linux_amd64 /opt/extensions/gomplate-lambda-extension
 ```
 
 
