@@ -4,11 +4,13 @@ before:
 
 builds:
   - env: [CGO_ENABLED=0]
-    goarch: [amd64]
+    goarch: [amd64, arm64]
     goos: [linux]
 
 archives:
-  - format: binary
+  - format: zip
+    wrap_in_directory: extensions
+    files: [none*]
 
 checksum:
   name_template: "checksums.txt"

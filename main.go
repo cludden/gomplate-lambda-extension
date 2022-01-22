@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/cludden/gomplate-lambda-extension/internal/extension"
 	"github.com/hairyhenderson/gomplate/v3"
@@ -17,6 +18,14 @@ const (
 	extensionName = "gomplate-lambda-extension"
 )
 
+// build variables
+var (
+	version string = "development"
+	commit  string = "development"
+	date    string = time.Now().UTC().Format(time.RFC3339)
+)
+
+// runtime configuration variables
 var (
 	Input  = os.Getenv("GOMPLATE_INPUT")
 	Output = os.Getenv("GOMPLATE_OUTPUT")
@@ -45,6 +54,7 @@ func main() {
 	if err := gomplate.RunTemplates(cfg); err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("initialization successful... version=%s commit=%s date=%s", version, commit, date)
 
 	if err := processEvents(ctx, client); err != nil {
 		log.Fatal(err)

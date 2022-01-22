@@ -17,3 +17,9 @@ variable "name" {
   type        = string
   default     = "gomplate-lambda-extension-example"
 }
+
+variable "release" {
+  description = "extension release name"
+  type        = string
+  default     = "0.1.1"
+}

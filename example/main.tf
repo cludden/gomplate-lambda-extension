@@ -12,6 +12,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "3.72.0"
     }
+    get = {
+      source  = "cludden/get"
+      version = "0.1.0"
+    }
   }
 }
 
@@ -40,12 +44,18 @@ data "aws_region" "current" {}
 ## Resources
 ################################################################################
 
+# invoke lambda function
+data "aws_lambda_invocation" "example" {
+  function_name = aws_lambda_function.example.function_name
+  input         = jsonencode({})
+}
+
 # provision lambda function
 resource "aws_lambda_function" "example" {
   filename         = data.archive_file.example.output_path
   function_name    = var.name
   handler          = "index.handler"
-  layers           = ["arn:aws:lambda:us-west-2:010013098410:layer:gomplate-lambda-extension:4"]
+  layers           = [aws_lambda_layer_version.gomplate.arn]
   role             = aws_iam_role.example.arn
   runtime          = "nodejs14.x"
   source_code_hash = filebase64sha256(data.archive_file.example.output_path)
@@ -69,10 +79,21 @@ resource "aws_lambda_function" "example" {
   ]
 }
 
-# invoke lambda function
-data "aws_lambda_invocation" "example" {
-  function_name = aws_lambda_function.example.function_name
-  input         = jsonencode({})
+# provision extension lambda layer
+resource "aws_lambda_layer_version" "gomplate" {
+  filename            = get_artifact.extension.dest
+  layer_name          = "${var.name}-gomplate"
+  compatible_runtimes = ["go1.x"]
+}
+
+# download extension
+resource "get_artifact" "extension" {
+  url      = "https://github.com/cludden/gomplate-lambda-extension/releases/download/v${var.release}/gomplate-lambda-extension_${var.release}_linux_amd64.zip"
+  checksum = "file:https://github.com/cludden/gomplate-lambda-extension/releases/download/v${var.release}/checksums.txt"
+  dest     = "gomplate-lambda-extension_${var.release}_linux_amd64.zip"
+  mode     = "file"
+  archive  = false
+  workdir  = abspath(path.root)
 }
 
 ##############################
