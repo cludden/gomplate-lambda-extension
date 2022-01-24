@@ -38,11 +38,31 @@ ADD https://github.com/cludden/gomplate-lambda-extension/releases/v0.1.0/downloa
 ## Configuration
 The extension is configured via [Lambda environment variables](https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html).
 
-| Name | Description | Required |
-| :--- | :--- | :---: |
-| `GOMPLATE_DATASOURCE_{foo}` | defines a named datasource | |
-| `GOMPLATE_INPUT` | input template | `true` |
-| `GOMPLATE_OUTPUT` | output file path (e.g. `/tmp/config.json`) | `true` |
+| Name | Description |
+| :--- | :--- |
+| `GOMPLATE_DATASOURCE_{name}` | defines a named datasource |
+| `GOMPLATE_INPUT` | anonymous input template (either inline or file path) |
+| `GOMPLATE_INPUT_{name}` | configures a named template with an associated input file path |
+| `GOMPLATE_OUTPUT` | output file path (e.g. `/tmp/config.json`) |
+| `GOMPLATE_OUTPUT_{name}` | configures a named template output file path |
+
+The extension supports either a single anonymous template:
+```
+# inline
+GOMPLATE_INPUT={"foo":"{{ (getenv "FOO" "bar") }}"}
+GOMPLATE_OUTPUT=/tmp/config.json
+
+# filesystem
+GOMPLATE_INPUT=/tmp/config.tpl.json
+GOMPLATE_OUTPUT=/tmp/config.json
+```
+or one or more named templates:
+```
+GOMPLATE_INPUT_config=/tmp/config.tpl.json
+COMPLATE_OUTPUT_config=/tmp/config.json
+COMPLATE_INPUT_data=/tmp/data.tpl.yml
+COMPLATE_OUTPUT_data=/tmp/data.yml
+```
 
 ## License
 Licensed under the [MIT License](LICENSE.md)  
